@@ -33,7 +33,7 @@ class Tree < Node
     attr_accessor :root
 
     def initialize(array)
-        @root = build_tree(array, 0, (array.length-1))
+        @root = build_tree(array.sort.uniq, 0, (array.length-1))
     end
 
 
@@ -239,15 +239,13 @@ def preorder(node = root)
 
 # Write a #height method which accepts a node and returns its height. Height is defined as the number of edges in longest path from a given node to a leaf node.
 
-def height(node = root)
-    unless node.nil? || node == root
-      node = (node.instance_of?(Node) ? find(node.data) : find(node))
-    end
+def height(node = root, count = -1)
+    return count if node.nil?
 
-    return -1 if node.nil?
-
-    [height(node.left), height(node.right)].max + 1
+    count += 1
+    [height(node.left, count), height(node.right, count)].max
   end
+
 
 # Write a #depth method which accepts a node and returns its depth. Depth is defined as the number of edges in path from a given node to the tree’s root node.
 
@@ -270,13 +268,12 @@ def depth(node = root, parent = root, edges = 0)
 # Write a #balanced? method which checks if the tree is balanced. A balanced tree is one where the difference between heights of left subtree and right subtree of every node is not more than 1.
 
 def balanced?(node = root)
-    true if node.nil?
-
-    left_height = height(node.left)
-    right_height = height(node.right)
-
-    true if (left_height - right_height).abs <= 1 && balanced?(node.left) && balanced?(node.right)
-
+    #Find the height of the left subtree
+    #Find the height of the right subtree
+    #If left_branch height is == right_branch height (+- 1) true, else false
+    left_height = height(node.left, 0)
+    right_height = height(node.right, 0)
+    return true if (left_height - right_height).between?(-1,1)
     false
   end
 
